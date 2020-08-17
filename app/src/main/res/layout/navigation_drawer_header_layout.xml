@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/navigationBarHeader"
+    android:layout_width="match_parent"
+    android:layout_height="222dp"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/author_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/author_photo"
+        android:paddingTop="5dp"
+        app:srcCompat="@drawable/author_photo"
+        />
+
+    <TextView
+        android:id="@+id/navigation_header_app_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dorsa"
+        android:textSize="40sp"
+        android:gravity="center_horizontal"
+        android:text="@string/application_title" />
+
+    <TextView
+        android:id="@+id/navigation_header_author_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/author_name"
+        android:textSize="13sp"
+        android:gravity="center_horizontal"
+        android:paddingTop="15dp"/>
+
+    <TextView
+        android:id="@+id/navigation_header_app_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/application_version"
+        android:textSize="13sp"
+        android:gravity="center_horizontal"/>
+</LinearLayout>

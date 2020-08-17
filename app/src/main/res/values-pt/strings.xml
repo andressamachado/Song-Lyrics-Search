@@ -8,4 +8,16 @@
     <string name="song_field_input_hint">Título da Música</string>
     <string name="search_button_text">Buscar agora!</string>
     <string name="need_help_clickable">Precisa de Ajuda?</string>
+    <string name="author_name">Andressa Machado</string>
+    <string name="application_version">versão 1.0</string>
+    <string name="author_photo">foto do autor</string>
+    <string name="drawer_instructions_label">instruções</string>
+    <string name="drawer_about_api_label">Sobre a API Utilizada</string>
+    <string name="drawer_github_page_label">Minha Página GitHub</string>
+    <string name="drawer_linkedin_label">Meu Perfil no LinkedIn</string>
+    <string name="about_this_project">Mais sobre este projeto</string>
+
+
+    <string name="open">open</string>
+    <string name="close">close</string>
 </resources>

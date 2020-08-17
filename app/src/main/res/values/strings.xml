@@ -7,4 +7,15 @@
     <string name="song_field_input_hint">Song Title</string>
     <string name="search_button_text">Search for it!</string>
     <string name="need_help_clickable">Need Help?</string>
+    <string name="author_name">Andressa Machado</string>
+    <string name="application_version">version 1.0</string>
+    <string name="author_photo">author photo</string>
+    <string name="drawer_instructions_label">Instructions</string>
+    <string name="drawer_about_api_label">About the API</string>
+    <string name="drawer_github_page_label">My GitHub Page</string>
+    <string name="drawer_linkedin_label">My LinkedIn Profile</string>
+    <string name="about_this_project">About this Project</string>
+
+    <string name="open">open</string>
+    <string name="close">close</string>
 </resources>
