@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/song_lyrics_main">
+
+    <TextView
+        android:id="@+id/application_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="@font/dorsa"
+        android:padding="8dp"
+        android:text="@string/application_title"
+        android:textSize="45sp" />
+
+    <Switch
+        android:id="@+id/switch_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:textOff="@string/light_mode"
+        android:textOn="@string/dark_mode"/>
+
+    <EditText
+        android:id="@+id/artist_field_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/application_name"
+        android:layout_alignParentStart="true"
+        android:autofillHints="no"
+        android:background="@drawable/custom_input_field"
+        android:gravity="start"
+        android:hint="@string/artist_field_input_hint"
+        android:inputType="text"
+        android:padding="10dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/song_title_field_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/artist_field_input"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:autofillHints="no"
+        android:background="@drawable/custom_input_field"
+        android:gravity="start"
+        android:hint="@string/song_field_input_hint"
+        android:inputType="text"
+        android:padding="10dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textSize="14sp" />
+</RelativeLayout>

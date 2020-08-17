@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#a5aac4</color>
+    <color name="colorPrimaryDark">#253A4B</color>
+    <color name="colorAccent">#9a6279</color>
+    <color name="inputFieldColor">#e0e0e0</color>
+    <color name="inputFieldSelectedColor">#edebeb</color>
+    <color name="songListedBackground">#B3dedede</color>
+    <color name="navigationBarHeader">#bcc1c6</color>
 </resources>

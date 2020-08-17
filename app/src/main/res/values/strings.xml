@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">SongLyricsSearch</string>
+    <string name="app_name">Song Lyrics Search</string>
+    <string name="application_title">Song Lyrics Search</string>
+    <string name="light_mode">light mode</string>
+    <string name="dark_mode">dark mode</string>
+    <string name="artist_field_input_hint">Artist or Group Name</string>
+    <string name="song_field_input_hint">Song Title</string>
+
 </resources>
