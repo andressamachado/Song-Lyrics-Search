@@ -7,4 +7,5 @@
     <string name="artist_field_input_hint">Nome do Artista ou Banda</string>
     <string name="song_field_input_hint">Título da Música</string>
     <string name="search_button_text">Buscar agora!</string>
+    <string name="need_help_clickable">Precisa de Ajuda?</string>
 </resources>

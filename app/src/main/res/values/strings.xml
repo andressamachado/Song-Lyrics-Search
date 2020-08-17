@@ -6,4 +6,5 @@
     <string name="artist_field_input_hint">Artist or Group Name</string>
     <string name="song_field_input_hint">Song Title</string>
     <string name="search_button_text">Search for it!</string>
+    <string name="need_help_clickable">Need Help?</string>
 </resources>
