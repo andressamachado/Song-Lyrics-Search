@@ -19,14 +19,15 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SongLyricActivity extends AppCompatActivity {
-    String lyric;
-    String songInfo;
-    long id;
-    boolean isFavorite;
     TextView titleTextField;
     TextView lyricTextField;
     CheckBox favoriteCheckButton;
     SQLiteDatabase db;
+
+    boolean isFavorite;
+    long id;
+    String songInfo;
+    String lyric;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +41,10 @@ public class SongLyricActivity extends AppCompatActivity {
 
         titleTextField = findViewById(R.id.song_info_title);
         titleTextField.setText(songInfo);
+
         lyricTextField = findViewById(R.id.lyric_text_field);
         lyricTextField.setText(lyric);
+
         favoriteCheckButton = findViewById(R.id.checkbox_favorite_song);
         favoriteCheckButton.setChecked(isFavorite);
 

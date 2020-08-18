@@ -79,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String ARTIST_NAME = "ARTIST";
     /**Key to be used to pass the lyric found data to the next activity*/
     public static final String LYRIC = "LYRIC";
+    /**Key to be used to pass the boolean isFavorite data to the next activity*/
+    public static final String IS_FAVORITE = "FAVORITE";
+
     /**Key to be used to pass user`s mode preferences to the next activity*/
     public static String user_mode_pref_key = "style";
 
@@ -105,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String song = null;
     /**Used to hold the lyric found from web searched*/
     String lyrics;
+    /**Used to hold if the song is listed as a favorite song */
+    boolean isFavorite;
     /**Instance to create, delete and execute SQL commands to handle lyrics previously searched*/
     SQLiteDatabase db;
     /**Holds every song searched before to avoid add repeated songs to the database*/
@@ -585,7 +590,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         goToSongPage.putExtra("song info", songTitle + " - " + artistName);
 
         //Holds if the song was set to be favorite
-        boolean isFavorite = currentSearchPosition != -1 && searchHistory.get(currentSearchPosition).isFavorite();
+        isFavorite = currentSearchPosition != -1 && searchHistory.get(currentSearchPosition).isFavorite();
         goToSongPage.putExtra("isFavorite", isFavorite );
         //starts the new activity
         startActivity(goToSongPage);
@@ -913,11 +918,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dataToPass.putString(ARTIST_NAME, artist);
                 dataToPass.putString(SONG_TITLE, song);
                 dataToPass.putString(LYRIC, lyrics);
+                dataToPass.putBoolean(IS_FAVORITE, isFavorite);
                 dataToPass.putLong("id", newId);
 
                 //if the device is a tablet, open the lyric page as a fragment instead of opening a new page
                 if (isTablet){
-                    DetailFragment dFragment = new DetailFragment();
+                    FragmentDetail dFragment = new FragmentDetail();
 
                     dFragment.setArguments(dataToPass);
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragmentLocation, dFragment)

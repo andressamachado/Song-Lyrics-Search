@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/song_lyrics_main"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/application_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        />
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/application_toolbar"
+        tools:openDrawer="start">
+
+        <!-- THIS IS WHAT IS VISIBLE ON SCREEN:-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/application_toolbar"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/application_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:fontFamily="@font/dorsa"
+                android:padding="8dp"
+                android:text="@string/application_title"
+                android:textSize="45sp" />
+
+            <Switch
+                android:id="@+id/switch_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textOff="@string/light_mode"
+                android:textOn="@string/dark_mode"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <EditText
+                android:id="@+id/artist_field_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/application_name"
+                android:layout_alignParentStart="true"
+                android:autofillHints="no"
+                android:background="@drawable/custom_input_field"
+                android:gravity="start"
+                android:hint="@string/artist_field_input_hint"
+                android:inputType="text"
+                android:padding="10dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/song_title_field_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/artist_field_input"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="10dp"
+                android:autofillHints="no"
+                android:background="@drawable/custom_input_field"
+                android:gravity="start"
+                android:hint="@string/song_field_input_hint"
+                android:inputType="text"
+                android:padding="10dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/search_button"
+                android:layout_width="400dp"
+                android:layout_height="29dp"
+                android:layout_below="@+id/song_title_field_input"
+                android:layout_alignParentStart="true"
+                android:layout_marginVertical="10dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/custom_search_button"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/search_button_text"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/google_button"
+                android:layout_width="90dp"
+                android:layout_height="28dp"
+                android:layout_above="@+id/searched_song_list"
+                android:layout_below="@+id/song_title_field_input"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="11dp"
+                android:layout_toEndOf="@+id/search_button"
+                android:background="@android:color/white"
+                android:src="@drawable/ic_google" />
+
+            <TextView
+                android:id="@+id/help_button"
+                android:layout_width="99dp"
+                android:layout_height="31dp"
+                android:layout_above="@+id/searched_song_list"
+                android:layout_below="@+id/song_title_field_input"
+                android:layout_alignEnd="@+id/song_title_field_input"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="12dp"
+                android:layout_toStartOf="@+id/searched_song_list"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/need_help_clickable"
+                android:textColor="@color/colorAccent"
+                android:textSize="16sp"
+                tools:ignore="OnClick" />
+
+            <ListView
+                android:id="@+id/searched_song_list"
+                android:layout_width="400dp"
+                android:layout_height="677dp"
+                android:layout_below="@+id/search_button"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/background"
+                />
+
+            <FrameLayout
+                android:id="@+id/fragmentLocation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignTop="@+id/searched_song_list"
+                android:layout_below="@+id/help_button"
+                android:layout_toEndOf="@+id/searched_song_list" />
+
+        </RelativeLayout>
+
+    <!-- THIS IS WHAT IS WHAT POPS OUT FROM THE SIDE:-->
+
+    <com.google.android.material.navigation.NavigationView
+        app:headerLayout="@layout/navigation_drawer_header_layout"
+        android:fitsSystemWindows="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/navigation_drawer_menu"
+        android:id="@+id/nav_view"/>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+</RelativeLayout>
