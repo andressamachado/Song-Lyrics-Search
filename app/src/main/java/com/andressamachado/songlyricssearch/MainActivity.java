@@ -4,9 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -103,12 +107,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return true;
-    }
+        //Instance to go to the next activity
+        Intent browserIntent;
+        //String holds the message to be displayed
+        String message;
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
+        //Look at your menu XML file. Put a case for every id in that file:
+        switch(item.getItemId()) {
+            case R.id.toolbar_linkedin:
+                //Sets the intent to be passed as argument to the startActivity method
+                browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/andressa-machado-59705792/"));
+                //Goes to the API web page
+                startActivity(browserIntent);
+                break;
+            case R.id.toolbar_github:
+                //Sets the intent to be passed as argument to the startActivity method
+                browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/andressamachado"));
+                //Goes to the API web page
+                startActivity(browserIntent);
+                break;
+            case R.id.toolbar_about:
+                message = "This is the Song Lyrics Search activity written by Andressa Machado";
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                break;
+        }
+
+        return true;
     }
 
     private void buildAndDisplayAlertDialog() {
@@ -127,5 +151,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //sets positive button to close the dialog
         builder.setPositiveButton(R.string.alert_dialog_positive_btn, (click, arg) -> {
         }).setView(customAlertView).show();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        //Look at your menu XML file. Put a case for every id in that file:
+        switch(item.getItemId()) {
+            case R.id.drawer_instructions:
+                buildAndDisplayAlertDialog();
+                break;
+            case R.id.drawer_about_api:
+                //Sets the intent to be passed as argument to the startActivity method
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lyricsovh.docs.apiary.io/#"));
+                //Goes to the API web page
+                startActivity(browserIntent);
+                break;
+            case R.id.drawer_github:
+                //Sets the intent to be passed as argument to the startActivity method
+                browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/andressamachado"));
+                //Goes to the API web page
+                startActivity(browserIntent);
+                break;
+            case R.id.drawer_linkedin:
+                //Sets the intent to be passed as argument to the startActivity method
+                browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/andressa-machado-59705792/"));
+                //Goes to the API web page
+                startActivity(browserIntent);
+                break;
+        }
+
+        //Close the navigation drawer
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.closeDrawer(GravityCompat.START);
+
+        return false;
     }
 }
