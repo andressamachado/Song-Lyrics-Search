@@ -9,8 +9,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +29,13 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    /**Key to be used to pass user`s mode preferences to the next activity*/
+    public static String user_mode_pref_key = "style";
+
+    /**Instances to be used to handle the shared preferences between activities*/
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor mEditor;
+
     /**XML layout elements declarations*/
     Toolbar toolbar;
     DrawerLayout drawer;
@@ -83,16 +93,71 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Sets initial background color to white
         view.setBackgroundColor(getResources().getColor(android.R.color.white));
 
+        //Manage to hold the user`s style mode preference to be loaded next time the application is opened
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String modeOptionSaved = sharedPreferences.getString(user_mode_pref_key, "light");
+
+        if (modeOptionSaved.equals("light")){
+            //mode switch not checked
+            modeSwitch.setChecked(false);
+            //if user checks to use the light mode, load the light mode style
+            setModeLight();
+        } else {
+            modeSwitch.setChecked(true);
+            //if user checks to use the dark mode, load the dark mode style
+            setModeDark();
+        }
+
         //builder fot the alert dialog
         dialogBuilder = new AlertDialog.Builder(this);
+
     }
 
     private void setClickListeners(){
+        //Listener to the switch on the top right that selects the user`s mode preference
+        modeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            //Editor to manage the mode change made by the user
+            mEditor = sharedPreferences.edit();
+
+            //Performs changes in the layout of the activity
+            if (isChecked) {
+                mEditor.putString(user_mode_pref_key, "dark");
+                setModeDark();
+            } else {
+                mEditor.putString(user_mode_pref_key, "light");
+                setModeLight();
+            }
+
+            mEditor.apply();
+        });
+
         //Listener to the text view need help
         needHelp.setOnClickListener(v -> {
             //displays a alert dialog with information about the application
             buildAndDisplayAlertDialog();
         });
+    }
+
+    private void setModeDark() {
+        //Black background
+        view.setBackgroundColor(Color.rgb(1, 0, 0));
+        //new image to the list view
+        searchedSongList.setBackgroundResource(R.drawable.darkmode);
+        //title color to purple
+        appTitle.setTextColor(Color.rgb(154, 98, 121));
+        //black background for the Google image button
+        googleButton.setBackgroundColor(Color.rgb(1, 0, 0));
+    }
+
+    private void setModeLight() {
+        //White background
+        view.setBackgroundColor(Color.WHITE);
+        //Standard image for the list view background
+        searchedSongList.setBackgroundResource(R.drawable.background);
+        //App title to black
+        appTitle.setTextColor(Color.BLACK);
+        //Google image button background to white to matches the app background
+        googleButton.setBackgroundColor(Color.WHITE);
     }
 
     @Override
