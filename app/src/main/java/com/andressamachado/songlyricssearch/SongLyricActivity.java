@@ -47,6 +47,23 @@ public class SongLyricActivity extends AppCompatActivity {
 
         favoriteCheckButton.setOnClickListener(v -> {
 
+            SongLyricsDBOpener dbOpener = new SongLyricsDBOpener(this);
+            db = dbOpener.getWritableDatabase();
+
+            id = fromSongLyricsSearchActivity.getLongExtra("id",0);
+
+            CheckBox self = (CheckBox)v;
+            ContentValues values = new ContentValues();
+
+            if (self.isChecked()) {
+                values.put(SongLyricsDBOpener.COL_IS_FAVORITE, 1);
+            } else {
+                values.put(SongLyricsDBOpener.COL_IS_FAVORITE, 0);
+            }
+
+            String[] whereValue = {id+""};
+            db.update(SongLyricsDBOpener.TABLE_NAME, values, "_id = ?", whereValue);
+
         });
     }
 }

@@ -30,4 +30,11 @@
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="make_it_favorite">Make it favorite</string>
+    <string name="progress_bar_message">loading ...</string>
+    <string name="delete_dialog">Do you want to delete this record?</string>
+    <string name="delete_no">no, that is fine</string>
+    <string name="delete_yes">Yes, please</string>
+    <string name="toast_error_message">lyric not found</string>
+    <string name="concatenation_song_searched_info"> by </string>
+    <string name="artist_image">artist image</string>
 </resources>

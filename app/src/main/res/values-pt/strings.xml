@@ -31,4 +31,11 @@
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="make_it_favorite">Favorite esta música!</string>
+    <string name="progress_bar_message">Carregando …</string>
+    <string name="delete_dialog">Você deseja deletar esta letra?</string>
+    <string name="delete_no">Não, foi engano</string>
+    <string name="delete_yes">Sim, por favor</string>
+    <string name="toast_error_message">música não encontrada</string>
+    <string name="concatenation_song_searched_info"> por </string>
+    <string name="artist_image">imagem do artista</string>
 </resources>
