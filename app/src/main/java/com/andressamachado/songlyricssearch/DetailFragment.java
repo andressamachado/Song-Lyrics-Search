@@ -25,25 +25,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 public class DetailFragment extends Fragment{
-    private AppCompatActivity parentActivity;
-    private Bundle dataFromActivity;
-    private String artistName;
-    private String songTitle;
-    private String lyrics;
-    private View result;
     ImageView artistIMG;
     TextView lyric;
 
     public DetailFragment(){ }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        dataFromActivity = getArguments();
+        Bundle dataFromActivity = getArguments();
 
-        artistName = dataFromActivity.getString(MainActivity.ARTIST_NAME);
-        songTitle = dataFromActivity.getString(MainActivity.SONG_TITLE);
-        lyrics = dataFromActivity.getString(MainActivity.LYRIC);
+        String artistName = dataFromActivity.getString(MainActivity.ARTIST_NAME);
+        String songTitle = dataFromActivity.getString(MainActivity.SONG_TITLE);
+        String lyrics = dataFromActivity.getString(MainActivity.LYRIC);
 
-        result = inflater.inflate(R.layout.fragment_detail_layout, container, false);
+        View result = inflater.inflate(R.layout.fragment_detail_layout, container, false);
 
         artistIMG = result.findViewById(R.id.artist_photo);
         lyric = result.findViewById(R.id.lyric_text_field);
@@ -57,6 +51,6 @@ public class DetailFragment extends Fragment{
         super.onAttach(context);
 
         //context will either be FragmentExample for a tablet, or EmptyActivity for phone
-        parentActivity = (AppCompatActivity)context;
+        AppCompatActivity parentActivity = (AppCompatActivity) context;
     }
 }
