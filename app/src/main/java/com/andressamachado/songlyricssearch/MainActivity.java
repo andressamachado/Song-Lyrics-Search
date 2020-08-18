@@ -8,16 +8,23 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,6 +34,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /**Key to be used to pass user`s mode preferences to the next activity*/
@@ -48,6 +70,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageButton googleButton;
     TextView needHelp;
     ListView searchedSongList;
+
+    /**Used to hold the name of the artist or group to be searched. Data from the user input*/
+    String artist = null;
+    /**Used to hold the title of the song to be searched. Data from the user input*/
+    String song = null;
+    /**Used to hold the lyric found from web searched*/
+    String lyrics;
+    /**Holds every song searched before to avoid add repeated songs to the database*/
+    ArrayList<LyricSearch> searchHistory = new ArrayList<>();
 
     /**Builds the alert dialog*/
     AlertDialog.Builder dialogBuilder;
@@ -101,11 +132,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //mode switch not checked
             modeSwitch.setChecked(false);
             //if user checks to use the light mode, load the light mode style
-            setModeLight();
+            setLightMode();
         } else {
             modeSwitch.setChecked(true);
             //if user checks to use the dark mode, load the dark mode style
-            setModeDark();
+            setDarkMode();
         }
 
         //builder fot the alert dialog
@@ -122,13 +153,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //Performs changes in the layout of the activity
             if (isChecked) {
                 mEditor.putString(user_mode_pref_key, "dark");
-                setModeDark();
+                setDarkMode();
             } else {
                 mEditor.putString(user_mode_pref_key, "light");
-                setModeLight();
+                setLightMode();
             }
 
             mEditor.apply();
+        });
+
+        //Listener to the search button
+        searchButton.setOnClickListener(v -> {
+            performSearch();
         });
 
         //Listener to the text view need help
@@ -138,29 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    private void setModeDark() {
-        //Black background
-        view.setBackgroundColor(Color.rgb(1, 0, 0));
-        //new image to the list view
-        searchedSongList.setBackgroundResource(R.drawable.darkmode);
-        //title color to purple
-        appTitle.setTextColor(Color.rgb(154, 98, 121));
-        //black background for the Google image button
-        googleButton.setBackgroundColor(Color.rgb(1, 0, 0));
-    }
-
-    private void setModeLight() {
-        //White background
-        view.setBackgroundColor(Color.WHITE);
-        //Standard image for the list view background
-        searchedSongList.setBackgroundResource(R.drawable.background);
-        //App title to black
-        appTitle.setTextColor(Color.BLACK);
-        //Google image button background to white to matches the app background
-        googleButton.setBackgroundColor(Color.WHITE);
-    }
-
-    @Override
+   @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
@@ -220,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
         //Look at your menu XML file. Put a case for every id in that file:
         switch(item.getItemId()) {
             case R.id.drawer_instructions:
@@ -252,4 +265,120 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return false;
     }
+
+    private void setDarkMode() {
+        //Black background
+        view.setBackgroundColor(Color.rgb(1, 0, 0));
+        //new image to the list view
+        searchedSongList.setBackgroundResource(R.drawable.darkmode);
+        //title color to purple
+        appTitle.setTextColor(Color.rgb(154, 98, 121));
+        //black background for the Google image button
+        googleButton.setBackgroundColor(Color.rgb(1, 0, 0));
+    }
+
+    private void setLightMode() {
+        //White background
+        view.setBackgroundColor(Color.WHITE);
+        //Standard image for the list view background
+        searchedSongList.setBackgroundResource(R.drawable.background);
+        //App title to black
+        appTitle.setTextColor(Color.BLACK);
+        //Google image button background to white to matches the app background
+        googleButton.setBackgroundColor(Color.WHITE);
+    }
+
+    /**
+     * Method to minimize keyboard when it is not necessary
+     * @see android.view.inputmethod.InputMethodManager
+     */
+    private void minimizeKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * Method to display a snack bar with a button
+     * */
+    private void displaySnackbar(ArrayList<String> message) {
+        //Instance of snack bar with a message error saying that the user entered an invalid input. Fields cannot be
+        //empty. It receives an array of strings with the error message.
+        Snackbar snackbar = Snackbar.make(searchButton, TextUtils.join(" and ", message) + " field cannot be empty", Snackbar.LENGTH_INDEFINITE)
+                .setAction("oops", v -> {
+                }).setActionTextColor(getResources().getColor(R.color.colorPrimary));
+        snackbar.show();
+    }
+
+    /**
+     * Method to secure that the user entered a string and not just pressed enter
+     * */
+    private boolean validateInput() {
+        //array to hold which field is not valid. Can be just artist, just song, or both fields
+        ArrayList<String> message = new ArrayList<>();
+        boolean valid = true;
+
+        //If user pressed enter before write the name of the artist, is not a valid input
+        if (artistFieldInput.getText().toString().trim().equals("")) {
+            message.add("Artist");
+            valid = false;
+        }
+
+        //If user pressed enter before write the title of the song, is not a valid input
+        if (songFieldInput.getText().toString().trim().equals("")) {
+            message.add("Song");
+            valid = false;
+        }
+
+        //if the input is not valid, display snack bar saying that the artist field, the song field
+        // or both fields cannot be empty
+        if (!valid) {
+            minimizeKeyboard();
+            displaySnackbar(message);
+        }
+
+        return valid;
+    }
+
+    /**
+     * Method to encode input from the user to perform a successful search.
+     * Uses the URLEncoder java class to perform the operation
+     * @see java.net.URLEncoder
+     * */
+    private void encodeString() {
+        //Try/catch to handle exceptions
+        try {
+            //put encoded values into variables
+            artist = URLEncoder.encode(artistFieldInput.getText().toString(), "UTF-8");
+            song = URLEncoder.encode(songFieldInput.getText().toString(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method to request the song from the API
+     * It receives a string containing an URL to be used in the search
+     * */
+    private void requestFromAPI(String requestURL) {
+      
+    }
+
+    /**
+     * Method to perform the song search from the API
+     * @see "lyricsovh.docs.apiary.io/#"
+     * */
+    private void performSearch() {
+        //Checks if the input from the user is correct
+        if (!validateInput()) {
+            return;
+        }
+
+        //encode the string entered to match the search pattern
+        encodeString();
+        //String with the url to be used in the search
+        String requestURL = "https://api.lyrics.ovh/v1/" + artist + "/" + song;
+        //Checks if the song exists in the API
+        requestFromAPI(requestURL);
+    }
+
 }
