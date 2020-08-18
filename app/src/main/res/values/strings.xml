@@ -29,4 +29,5 @@
 
     <string name="open">open</string>
     <string name="close">close</string>
+    <string name="make_it_favorite">Make it favorite</string>
 </resources>

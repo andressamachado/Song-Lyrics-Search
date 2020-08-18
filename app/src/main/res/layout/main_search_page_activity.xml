@@ -56,7 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:textOff="@string/light_mode"
-                android:textOn="@string/dark_mode"/>
+                android:textOn="@string/dark_mode"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <EditText
                 android:id="@+id/artist_field_input"

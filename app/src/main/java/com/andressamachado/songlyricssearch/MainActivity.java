@@ -288,56 +288,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         googleButton.setBackgroundColor(Color.WHITE);
     }
 
-    /**
-     * Method to minimize keyboard when it is not necessary
-     * @see android.view.inputmethod.InputMethodManager
-     */
-    private void minimizeKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 
-    /**
-     * Method to display a snack bar with a button
-     * */
-    private void displaySnackbar(ArrayList<String> message) {
-        //Instance of snack bar with a message error saying that the user entered an invalid input. Fields cannot be
-        //empty. It receives an array of strings with the error message.
-        Snackbar snackbar = Snackbar.make(searchButton, TextUtils.join(" and ", message) + " field cannot be empty", Snackbar.LENGTH_INDEFINITE)
-                .setAction("oops", v -> {
-                }).setActionTextColor(getResources().getColor(R.color.colorPrimary));
-        snackbar.show();
-    }
-
-    /**
-     * Method to secure that the user entered a string and not just pressed enter
-     * */
-    private boolean validateInput() {
-        //array to hold which field is not valid. Can be just artist, just song, or both fields
-        ArrayList<String> message = new ArrayList<>();
-        boolean valid = true;
-
-        //If user pressed enter before write the name of the artist, is not a valid input
-        if (artistFieldInput.getText().toString().trim().equals("")) {
-            message.add("Artist");
-            valid = false;
-        }
-
-        //If user pressed enter before write the title of the song, is not a valid input
-        if (songFieldInput.getText().toString().trim().equals("")) {
-            message.add("Song");
-            valid = false;
-        }
-
-        //if the input is not valid, display snack bar saying that the artist field, the song field
-        // or both fields cannot be empty
-        if (!valid) {
-            minimizeKeyboard();
-            displaySnackbar(message);
-        }
-
-        return valid;
-    }
 
     /**
      * Method to encode input from the user to perform a successful search.
@@ -360,7 +311,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * It receives a string containing an URL to be used in the search
      * */
     private void requestFromAPI(String requestURL) {
-      
+        //Instance of the Inner class SongQuery to perform the request
+        SongQuery req = new SongQuery();
+        req.execute(requestURL);
     }
 
     /**
@@ -368,11 +321,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @see "lyricsovh.docs.apiary.io/#"
      * */
     private void performSearch() {
-        //Checks if the input from the user is correct
-        if (!validateInput()) {
-            return;
-        }
-
         //encode the string entered to match the search pattern
         encodeString();
         //String with the url to be used in the search
@@ -381,4 +329,153 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         requestFromAPI(requestURL);
     }
 
+    /**
+     * Method to pass the lyric data to the next activity to be displayed
+     * */
+    private void sendLyricToNextActivity(String lyrics, long id, String songTitle, String artistName) {
+        //Intent from this to the next activity
+        Intent goToSongPage = new Intent(MainActivity.this, SongLyricActivity.class);
+        //Puts data into the intent instance
+        goToSongPage.putExtra("lyric", lyrics);
+        goToSongPage.putExtra("id", id);
+        goToSongPage.putExtra("song info", songTitle + " - " + artistName);
+
+        //starts the new activity
+        startActivity(goToSongPage);
+    }
+
+
+    /**
+     * This inner class inherits from AsyncTask and it is responsible for the tasks that runs on a
+     * background thread and whose result is published on the UI thread. An asynchronous task is
+     * defined by 3 generic types, called Params, Progress and Result, and 4 steps,
+     * called onPreExecute, doInBackground, onProgressUpdate and onPostExecute.
+     *
+     * @author Andressa Machado
+     * @version 1.0
+     * @see "android.os.AsyncTask<Params, Progress, Result>"
+     * @since 2020/08/17
+     */
+    protected class SongQuery extends AsyncTask<String, Integer, String> {
+
+        /**
+         * Method invoked on the background thread immediately after onPreExecute() finishes executing.
+         *
+         *  @see java.io.InputStream and org.json.JSONObject
+         * */
+        @Override
+        protected String doInBackground(String... strings) {
+            InputStream response;
+
+            //Try to get connected with the API and get a new Json object from this connection
+            try {
+                response = connectToAPI(strings[0]);
+
+                String result = convertResponseToString(response);
+                JSONObject lyricsObject = new JSONObject(result);
+
+                //save the lyric got from the api to the lyric string
+                lyrics = getLyricsFromJSON(lyricsObject);
+                //Sets the progress bar update progress
+                onProgressUpdate(50);
+
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        /**
+         * Method to connect the application with the API, using the URL of the API
+         *
+         * @see java.io.InputStream, java.net.HttpURLConnection, and  java.net.URL
+         * */
+        private InputStream connectToAPI(String string) throws IOException {
+            InputStream response;
+
+            URL url = new URL(string);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                response = urlConnection.getErrorStream();
+            } else {
+                response = urlConnection.getInputStream();
+            }
+
+            return response;
+        }
+
+        /**
+         * Method to read the result from the API and save it, returning the lyric as a string
+         *
+         * @see java.io.InputStream*/
+        private String convertResponseToString(InputStream response) throws IOException {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response, StandardCharsets.UTF_8), 8);
+            StringBuilder sb = new StringBuilder();
+
+            //While it is a line, continue reading and appending to the string
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+
+            return sb.toString();
+        }
+
+        /**
+         * Method to return the lyric tag found in the JSON object
+         *
+         * @see "javax.json"
+         * */
+        private String getLyricsFromJSON(JSONObject lyricsObject) throws JSONException {
+            if (lyricsObject.has("lyrics")) {
+                //debug purpose
+                Log.i("SongLyricsSearch", "lyric found");
+
+                return lyricsObject.getString("lyrics");
+            } else {
+                String error = lyricsObject.getString("error");
+                Log.i("SongLyricsSearch", error);
+
+                return null;
+            }
+        }
+
+        /**
+         *  Method to be invoked on the UI thread after the background computation finishes. The result of the
+         *  background computation is passed to this step as a parameter.
+         *  */
+        public void onPostExecute(String fromDoInBackground) {
+                //Song was found
+                String currentArtist = artistFieldInput.getText().toString().toLowerCase();
+                String currentSong = songFieldInput.getText().toString().toLowerCase();
+
+                LyricSearch current;
+
+                //boolean to control if the song was already searched before, so it is not added to the database nor the list
+                boolean exists = false;
+
+                for (int i = 0; i < searchHistory.size(); i++){
+                    current = searchHistory.get(i);
+
+                    if(current.getArtist().equalsIgnoreCase(currentArtist) && current.getSongTitle().equalsIgnoreCase(currentSong)){
+                        exists = true;
+                        break;
+                    }
+                }
+
+                long newId = -1;
+
+                //if the song was not searched before, it is added to the database and the array list
+                if(!exists) {
+                    //Creates a new search object and add it to the array list
+                    LyricSearch currentSearch = new LyricSearch(newId, currentArtist, currentSong, false);
+                    searchHistory.add(currentSearch);
+                }
+
+                sendLyricToNextActivity(lyrics, newId, currentSong, currentArtist);
+        }
+    }
 }
+
