@@ -4,39 +4,70 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.AlertDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    /**XML layout elements declarations*/
+    Toolbar toolbar;
+    DrawerLayout drawer;
+    View view;
+    TextView appTitle;
+    Switch modeSwitch;
+    EditText artistFieldInput;
+    EditText songFieldInput;
+    Button searchButton;
+    ImageButton googleButton;
+    TextView needHelp;
+    ListView searchedSongList;
+
+    /**Builds the alert dialog*/
+    AlertDialog.Builder dialogBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_search_page_activity);
 
-        Toolbar toolbar;
+        initializeActivity();
+        setClickListeners();
+    }
+
+    private void initializeActivity() {
+        //Initialization of every view used in this activity
         toolbar = (Toolbar) findViewById(R.id.application_toolbar);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        view = (View) findViewById(R.id.song_lyrics_main);
+        appTitle = (TextView) findViewById(R.id.application_name);
+        artistFieldInput = (EditText) findViewById(R.id.artist_field_input);
+        songFieldInput = (EditText) findViewById(R.id.song_title_field_input);
+        searchButton = (Button) findViewById(R.id.search_button);
+        googleButton = (ImageButton) findViewById(R.id.google_button);
+        modeSwitch = (Switch) findViewById(R.id.switch_mode);
+        searchedSongList = (ListView) findViewById(R.id.searched_song_list);
+        needHelp = (TextView) findViewById(R.id.help_button);
 
-        DrawerLayout drawer;
-        drawer = findViewById(R.id.drawer_layout);
-
+        //Sets the toolbar title to empty string to not display the name of the project there as it
+        //does not have space to display everything we have to display.
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
+        //Instance to handle the functionality of the drawer layout and framework action bar to
+        // implement the recommended design for navigation drawer
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.open, R.string.close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -45,6 +76,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Sets initial background color to white
+        view.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+        //builder fot the alert dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+    }
+
+    private void setClickListeners(){
+        //Listener to the text view need help
+        needHelp.setOnClickListener(v -> {
+            //displays a alert dialog with information about the application
+            buildAndDisplayAlertDialog();
+        });
     }
 
     @Override
@@ -65,5 +109,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
+    }
+
+    private void buildAndDisplayAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //Inflate the custom dialog to the view
+        View customAlertView = getLayoutInflater().inflate(R.layout.info_alert_dialog_layout, null, false);
+
+        //sets title
+        TextView title = customAlertView.findViewById(R.id.alert_title);
+        title.setText(R.string.info_alert_dialog_title);
+
+        //sets message
+        TextView instructions = customAlertView.findViewById(R.id.alert_instructions);
+        instructions.setText(R.string.info_alert_dialog_message);
+
+        //sets positive button to close the dialog
+        builder.setPositiveButton(R.string.alert_dialog_positive_btn, (click, arg) -> {
+        }).setView(customAlertView).show();
     }
 }

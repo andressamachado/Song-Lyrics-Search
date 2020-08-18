@@ -17,6 +17,16 @@
     <string name="drawer_linkedin_label">Meu Perfil no LinkedIn</string>
     <string name="about_this_project">Mais sobre este projeto</string>
 
+    <string name="info_alert_dialog_title">Instruções</string>
+    <string name="info_alert_dialog_message">1. Insira o nome do artista e o título da música pra cantar junto!
+        \n\n 2. Adicione a música à sua lista de favoritas clicando no [Favorite esta música] na página da música
+        \n\n 3. Você encontrará uma lista de músicas já buscadas na sua página inicial
+        \n\n 4. Suas músicas favoritas são indicadas pela estrela preenchida
+        \n\n 5. Clicando em uma música já buscada anteriormente te leva para a página da música rapidamente
+        \n\n 6. Você pode fazer uma busca rápida no Google clicando no icone do Google
+        \n\n 7. Você consegue mudar o estilo do seu aplicativo usando o switch no canto superior direito
+        \n\n Divirta-se!! </string>
+    <string name="alert_dialog_positive_btn">Entendi!</string>
 
     <string name="open">open</string>
     <string name="close">close</string>

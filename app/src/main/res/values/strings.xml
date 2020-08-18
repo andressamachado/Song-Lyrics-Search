@@ -16,6 +16,17 @@
     <string name="drawer_linkedin_label">My LinkedIn Profile</string>
     <string name="about_this_project">About this Project</string>
 
+    <string name="info_alert_dialog_title">Instructions</string>
+    <string name="info_alert_dialog_message">1. Insert the name of the Artist and the title of the song to find yourself singing!
+        \n\n 2. Add it to your list of favorite songs by clicking on the [make it favorite] checkbox in the song\`s page
+        \n\n 3. You can find a list of previously searched songs on the main page
+        \n\n 4. Your favorites are indicated by the full star
+        \n\n 5. Click on a song in your song history to quickly go to the lyric again
+        \n\n 6. You can do a quick search on Google by clicking on the Google icon
+        \n\n 7. You can switch the style to dark/light by using the switch on the top right
+        \n\n Have fun!! </string>
+    <string name="alert_dialog_positive_btn">Got it!</string>
+
     <string name="open">open</string>
     <string name="close">close</string>
 </resources>
