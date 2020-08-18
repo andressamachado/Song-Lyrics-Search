@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -69,6 +70,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /** Holds the activity name for the purpose of debugging with log.i*/
@@ -229,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Listener to the search button
         searchButton.setOnClickListener(v -> {
             loadingDialog.startLoadingDialog();
+            minimizeKeyboard();
             performSearch();
         });
 
@@ -276,6 +279,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 searchHistory.remove(position);
                 //Notify the adapter about the change
                 listViewSearchesAdapter.notifyDataSetChanged();
+
+                if (isTablet){
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                    ft.remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragmentLocation)));
+                    ft.commit();
+                }
+
+
             });
             dialogBuilder.show();
 
