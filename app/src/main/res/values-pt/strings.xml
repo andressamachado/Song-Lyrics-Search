@@ -7,7 +7,7 @@
     <string name="artist_field_input_hint">Nome do Artista ou Banda</string>
     <string name="song_field_input_hint">Título da Música</string>
     <string name="search_button_text">Buscar agora!</string>
-    <string name="need_help_clickable">Precisa de Ajuda?</string>
+    <string name="need_help_clickable">Ajuda?</string>
     <string name="author_name">Andressa Machado</string>
     <string name="application_version">versão 1.0</string>
     <string name="author_photo">foto do autor</string>
@@ -38,4 +38,5 @@
     <string name="toast_error_message">música não encontrada</string>
     <string name="concatenation_song_searched_info"> por </string>
     <string name="artist_image">imagem do artista</string>
+    <string name="app_subtitle">Seu app pra cantar junto</string>
 </resources>

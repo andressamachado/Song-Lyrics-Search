@@ -37,4 +37,5 @@
     <string name="toast_error_message">lyric not found</string>
     <string name="concatenation_song_searched_info"> by </string>
     <string name="artist_image">artist image</string>
+    <string name="app_subtitle">Your application to sing together</string>
 </resources>
