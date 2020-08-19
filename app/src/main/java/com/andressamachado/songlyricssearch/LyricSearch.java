@@ -1,19 +1,18 @@
 package com.andressamachado.songlyricssearch;
-/****************************************************************************************
- Filename:SongLyricsSearch.java
- Author: Andressa Pessoa de Araujo Machado [040923007]
- Date: 2020/08/17
- Purpose: A song lyrics search object to represent the search made by the user. It holds the
- artist or band name, the song title, and if it is a favorite song or not
- ***************************************************************************************/
 
+/******************************************************************************************
+ *  A song lyrics search object to represent the search made by the user. It holds the
+ *  artist or band name, the song title, and if it is a favorite song or not
+ *
+ * @author Andressa Machado
+ * @version 1.0
+ * @since 2020/08/17
+ ******************************************************************************************/
 public class LyricSearch {
     private long id;
     private String artist;
     private String songTitle;
     private boolean isFavorite;
-
-    public LyricSearch() {}
 
     public LyricSearch(long id, String artist, String songTitle, Boolean isFavorite) {
         this.id = id;
@@ -40,9 +39,5 @@ public class LyricSearch {
 
     public String toString() {
         return this.artist + " - " + this.songTitle +". Favorite: " + isFavorite;
-    }
-
-    public void setIsFavorite(boolean favorite) {
-        this.isFavorite = favorite;
     }
 }

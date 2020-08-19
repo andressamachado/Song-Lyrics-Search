@@ -1,16 +1,5 @@
 package com.andressamachado.songlyricssearch;
 
-/******************************************************************************************
- * This class is responsible for the main functionality of the application. It extends
- * AppCompatActivity wto adjusts newer platform features on older devices. It implements
- * NavigationView.OnNavigationItemSelectedListener to handle events on navigation items.
- *
- * @author Andressa Machado
- * @version 1.0
- * @see AppCompatActivity and NavigationView.OnNavigationItemSelectedListener;
- * @since 2020/08/17
- ******************************************************************************************/
-
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -74,6 +63,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/******************************************************************************************
+ * This class is responsible for the main functionality of the application. It extends
+ * AppCompatActivity wto adjusts newer platform features on older devices. It implements
+ * NavigationView.OnNavigationItemSelectedListener to handle events on navigation items.
+ *
+ * @author Andressa Machado
+ * @version 1.0
+ * @see AppCompatActivity and NavigationView.OnNavigationItemSelectedListener;
+ * @since 2020/08/17
+ ******************************************************************************************/
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /** Holds the activity name for the purpose of debugging with log.i*/
     private static final String TAG = "SongLyricSearchActivity";
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * OnCreate method is a bundle where the activity is initialized. It is called when the
      * application is not loaded yet. Here is performed basic application startup logic that
      * should happen only once for the entire life of the activity
-     * */
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,7 +145,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * Method created to initialize every view from the XML layouts used in this activity
+     * Method created to initialize every view from the XML layouts used in this activity and to set
+     * initial configuration to the app functionality
      */
     private void initializeActivity() {
         //Initialization of every view used in this activity
@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Method to handle the functionality of the options(icons) in the toolbar
      *
      *  @param item icons in the toolbar
-     * @return false to allow normal menu processing to proceed, true to consume it here
+     *  @return false to allow normal menu processing to proceed, true to consume it here
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -812,21 +812,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             rowSearch.setText(songInfoToBeDisplayed);
 
             Log.e(TAG, "getView:" +  thisRow.getSongTitle());
-            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
-            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
-            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
-            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
             Log.e(TAG, "size:" +  searchHistory.size());
 
             return newView;
-        }
-
-
-        public void updateSearchedList(ArrayList<LyricSearch> searchHistory) {
-            ArrayList<LyricSearch> temp = (ArrayList<LyricSearch>) searchHistory.clone();
-            this.searchHistory.clear();
-            this.searchHistory.addAll(temp);
-            this.notifyDataSetChanged();
         }
     }
 
@@ -907,6 +895,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //boolean to control if the song was already searched before, so it is not added to the database nor the list
                 boolean exists = false;
 
+                //checking if the song being searched was already searched before and is registered in the database
                 for (int i = 0; i < searchHistory.size(); i++){
                     current = searchHistory.get(i);
 
@@ -920,18 +909,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 //if the song was not searched before, it is added to the database and the array list
                 if(!exists) {
+                    //ContentValues instance to store a set of values to be precessed
                     ContentValues newRowValues = new ContentValues();
                     newRowValues.put(SongLyricsDBOpener.COL_ARTISTS, currentArtist);
                     newRowValues.put(SongLyricsDBOpener.COL_SONGS, currentSong);
                     newRowValues.put(SongLyricsDBOpener.COL_IS_FAVORITE, 0);
 
-                    //Inserts in the database
+                    //Inserts in the database, save the id returned
                     newId = db.insert(SongLyricsDBOpener.TABLE_NAME, null, newRowValues);
 
                     //Creates a new search object and add it to the array list
                     LyricSearch currentSearch = new LyricSearch(newId, currentArtist, currentSong, false);
                     searchHistory.add(currentSearch);
 
+                    // Application was having a bug of adding a new song in the ListView with info from another search
                     // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
                     searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
 
@@ -957,9 +948,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 }
 
-
+                //Bundle instance to pass data to a fragment in case the user is using a tablet
                 Bundle dataToPass = new Bundle();
 
+                //saving data to be passed
                 dataToPass.putString(ARTIST_NAME, currentArtist);
                 dataToPass.putString(SONG_TITLE, currentSong);
                 dataToPass.putString(LYRIC, lyrics);
@@ -971,6 +963,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     FragmentDetail dFragment = new FragmentDetail();
 
                     dFragment.setArguments(dataToPass);
+                    //Replace the fragment area with the fragment detail to the right of the screen
                     getSupportFragmentManager().beginTransaction().replace(R.id.lyrics_tablet_fragment_area, dFragment)
                             .commit();
                 } else {
@@ -1026,6 +1019,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             URL url = new URL(string);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
+            //Checks if the connection was successful, if so returns the stream, otherwise return an error
             if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                 response = urlConnection.getErrorStream();
             } else {
@@ -1044,6 +1038,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          * @see "javax.json"
          */
         private String getLyricsFromJSON(JSONObject lyricsObject) throws JSONException {
+            //Checks if there is a tag called lyrics in the JSON object
             if (lyricsObject.has("lyrics")) {
                 //debug purpose
                 Log.i("SongLyricsSearch", "lyric found");
@@ -1065,7 +1060,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      *
      * @author Andressa Machado
      * @version 1.0
-     * @since 2020/08/05
+     * @since 2020/08/17
      */
     protected class LoadingDialog {
         /**Where the alert dialog will appear*/
@@ -1095,9 +1090,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             dialog.show();
         }
 
-        /**
-         * Method to close the dialog
-         * */
+        /**Method to close the dialog*/
         void dialogDismiss() {
             Handler handler = new Handler();
             handler.postDelayed(() -> dialog.dismiss(),500);
