@@ -8,9 +8,10 @@
         android:id="@+id/song_info_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/dorsa"
+        android:textSize="50sp"
         android:layout_gravity="top|center_horizontal"
         android:gravity="center"
-        android:textSize="30sp"
         android:textAllCaps="true"
         />
 
