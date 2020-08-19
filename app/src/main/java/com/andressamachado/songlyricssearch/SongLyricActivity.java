@@ -65,7 +65,6 @@ public class SongLyricActivity extends AppCompatActivity {
 
         initializeActivity();
         setClickListeners(fromSongLyricsSearchActivity);
-
     }
 
     /**

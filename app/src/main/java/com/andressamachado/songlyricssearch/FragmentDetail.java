@@ -52,6 +52,21 @@ public class FragmentDetail extends Fragment{
         //View containing the song lyric searched
         View result = inflater.inflate(R.layout.fragment_detail_layout, container, false);
 
+        //Retrieve data from main activity
+        Bundle dataFromActivity = retrieveDataFromMain();
+
+        initializeFragment(result);
+        setClickListener(dataFromActivity);
+
+        return result;
+    }
+
+    /**
+     * Method to get data passed by using bundle from MainActivity
+     *
+     * @return bundle
+     */
+    private Bundle retrieveDataFromMain() {
         //Bundle instance to get data from MainActivity class
         Bundle dataFromActivity = getArguments();
 
@@ -59,7 +74,14 @@ public class FragmentDetail extends Fragment{
         lyric = dataFromActivity.getString(MainActivity.LYRIC);
         isFavorite = dataFromActivity.getBoolean(MainActivity.IS_FAVORITE);
         songInfo = dataFromActivity.getString(MainActivity.ARTIST_NAME) + " - " + dataFromActivity.getString(MainActivity.SONG_TITLE);
+        return dataFromActivity;
+    }
 
+    /**
+     * Method created to initialize every view from the XML layout used in this fragment and to set
+     * initial configuration to its functionality
+     */
+    private void initializeFragment(View result) {
         //Setting song title and artist name to be displayed
         titleTextField = (TextView) result.findViewById(R.id.song_info_title);
         titleTextField.setText(songInfo);
@@ -71,7 +93,14 @@ public class FragmentDetail extends Fragment{
         //Setting isFavorite option
         favoriteCheckButton = (CheckBox) result.findViewById(R.id.checkbox_favorite_song);
         favoriteCheckButton.setChecked(isFavorite);
+    }
 
+    /**
+     * Method to set the functionality of the "make it favorite" checkbox. Sets listener to the check.
+     *
+     * @param dataFromActivity reference to the bundle to get the id of the song to be favored
+     */
+    private void setClickListener(Bundle dataFromActivity) {
         //Setting song to be listed as a favorite song
         favoriteCheckButton.setOnClickListener(v -> {
             //Manages updates in the database
@@ -97,8 +126,6 @@ public class FragmentDetail extends Fragment{
             String[] whereValue = {id+""};
             db.update(SongLyricsDBOpener.TABLE_NAME, values, "_id = ?", whereValue);
         });
-
-        return result;
     }
 
     /**

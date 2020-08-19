@@ -8,7 +8,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -61,7 +60,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Objects;
 
 /******************************************************************************************
  * This class is responsible for the main functionality of the application. It extends
@@ -184,6 +182,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Load content from database and puts it into the array list with the songs previously searched
         loadFromDatabase();
 
+        //Adjusts activity`s layout configuration based on users preference
+        layoutPreferenceConfiguration();
+
+        //builder fot the alert dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+
+        //Adapter to handle the items in the list view
+        listViewSearchesAdapter = new ListAdapter(searchHistory, getApplicationContext());
+        searchedSongList.setAdapter(listViewSearchesAdapter);
+
+        //Instance of an inner class to display an alert dialog with a progress bar inside
+        loadingDialog = new LoadingDialog(this);
+    }
+
+    /**
+     * Method to process the user layout preference set by using SharedPreferences
+     */
+    private void layoutPreferenceConfiguration() {
         //Manage to hold the user`s style mode preference to be loaded next time the application is opened
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String modeOptionSaved = sharedPreferences.getString(user_mode_pref_key, "light");
@@ -198,16 +214,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //if user checks to use the dark mode, load the dark mode style
             setModeDark();
         }
+    }
 
-        //builder fot the alert dialog
-        dialogBuilder = new AlertDialog.Builder(this);
+    /**
+     * Changes the layout configuration of the MainActivity to the dark mode
+     * */
+    private void setModeDark() {
+        //Black background
+        view.setBackgroundColor(getResources().getColor(R.color.darkModeBackgroundColor));
+        //new image to the list view
+        searchedSongList.setBackgroundResource(R.drawable.darkmode);
+        //title color to purple
+        appTitle.setTextColor(getResources().getColor(R.color.colorAccent));
+        //black background for the Google image button
+        googleButton.setBackgroundColor(getResources().getColor(R.color.darkModeBackgroundColor));
+    }
 
-        //Adapter to handle the items in the list view
-        listViewSearchesAdapter = new ListAdapter(searchHistory, getApplicationContext());
-        searchedSongList.setAdapter(listViewSearchesAdapter);
-
-        //Instance of an inner class to display an alert dialog with a progress bar inside
-        loadingDialog = new LoadingDialog(this);
+    /**
+     * Changes the layout configuration of the MainActivity to the light mode
+     * */
+    private void setModeLight() {
+        //White background
+        view.setBackgroundColor(Color.WHITE);
+        //Standard image for the list view background
+        searchedSongList.setBackgroundResource(R.drawable.background);
+        //App title to black
+        appTitle.setTextColor(Color.BLACK);
+        //Google image button background to white to matches the app background
+        googleButton.setBackgroundColor(Color.WHITE);
     }
 
     /**
@@ -266,46 +300,72 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             buildAndDisplayAlertDialog();
         });
 
-        //Listener to a long click on an item in the list view
+        //Listener to a long click on an item in the list view. Delete function
         searchedSongList.setOnItemLongClickListener((parent, view, position, id) -> {
-            //get the id of the song in the array list
-            long idToDelete = searchHistory.get(position).getId();
-
-            //Alert dialog asking if the user wants to delete the record
-            dialogBuilder.setTitle(R.string.delete_dialog);
-            dialogBuilder.setNegativeButton(R.string.delete_no, null);
-            dialogBuilder.setPositiveButton(R.string.delete_yes, (dialog, which) -> {
-                //Deletes the record from the database
-                db.delete(SongLyricsDBOpener.TABLE_NAME, SongLyricsDBOpener.COL_SEARCH_ID + "= ?", new String[]{Long.toString(idToDelete)});
-                //Deletes the record from the array list
-                searchHistory.remove(position);
-
-
-                // Notify the adapter about the change
-                // Notify after add is not working, so both had to be changed by overkill code
-                //listViewSearchesAdapter.notifyDataSetChanged();
-
-                // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
-                 searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
-
-                if (isTablet){
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    Fragment toRemove = getSupportFragmentManager().findFragmentById(R.id.lyrics_tablet_fragment_area);
-
-                    if(toRemove == null) {
-                        return;
-                    }
-
-                    ft.remove(toRemove);
-                    ft.commit();
-                }
-
-
-            });
-            dialogBuilder.show();
-
+            buildAlertDialogToDeleteRecord(position);
             return true;
         });
+    }
+
+    /**
+     * Method to build an alert dialog to get confirmation from the user to delete the song lyric records
+     * from the array list and from the database.
+     *
+     * @param position song search record in array list index (searchHistory)
+     */
+    private void buildAlertDialogToDeleteRecord(int position) {
+        //get the database id of the LyricSearch object added in the array list
+        long idToDelete = searchHistory.get(position).getId();
+
+        //Alert dialog asking if the user wants to delete the record
+        dialogBuilder.setTitle(R.string.delete_dialog);
+        dialogBuilder.setNegativeButton(R.string.delete_no, null);
+        dialogBuilder.setPositiveButton(R.string.delete_yes, (dialog, which) -> {
+            deleteSongRecord(position, idToDelete);
+        });
+
+        dialogBuilder.show();
+    }
+
+    /**
+     * Delete song lyric record from the searchedSongList array and from the database
+     *
+     * @param position array list index
+     * @param idToDelete database id
+     */
+    private void deleteSongRecord(int position, long idToDelete) {
+        //Deletes the record from the database
+        db.delete(SongLyricsDBOpener.TABLE_NAME, SongLyricsDBOpener.COL_SEARCH_ID + "= ?", new String[]{Long.toString(idToDelete)});
+        //Deletes the record from the array list
+        searchHistory.remove(position);
+
+        // Notify the adapter about the change
+        // Notify after add is not working, so both had to be changed by overkill code
+        //listViewSearchesAdapter.notifyDataSetChanged();
+
+        // Application was having a bug of adding a new song in the ListView with info from another search when in tablet mode
+        // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
+        searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
+        removeFragmentFromScreen();
+    }
+
+    /**
+     * Method to remove fragment from screen when deleting song from the records in tablet mode
+     */
+    private void removeFragmentFromScreen() {
+        //If it is tablet, remove the fragment from the right side as well
+        if (isTablet){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment toRemove = getSupportFragmentManager().findFragmentById(R.id.lyrics_tablet_fragment_area);
+
+            //If the song to be deleted is not being shown at the right side, return as there is no fragment to be deleted
+            if(toRemove == null) {
+                return;
+            }
+
+            ft.remove(toRemove);
+            ft.commit();
+        }
     }
 
     /**
@@ -422,34 +482,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * Changes the layout configuration of the MainActivity to the dark mode
-     * */
-    private void setModeDark() {
-        //Black background
-        view.setBackgroundColor(Color.rgb(1,0,0));
-        //new image to the list view
-        searchedSongList.setBackgroundResource(R.drawable.darkmode);
-        //title color to purple
-        appTitle.setTextColor(Color.rgb(154, 98, 121));
-        //black background for the Google image button
-        googleButton.setBackgroundColor(Color.rgb(1,0,0));
-    }
-
-    /**
-     * Changes the layout configuration of the MainActivity to the light mode
-     * */
-    private void setModeLight() {
-        //White background
-        view.setBackgroundColor(Color.WHITE);
-        //Standard image for the list view background
-        searchedSongList.setBackgroundResource(R.drawable.background);
-        //App title to black
-        appTitle.setTextColor(Color.BLACK);
-        //Google image button background to white to matches the app background
-        googleButton.setBackgroundColor(Color.WHITE);
-    }
-
-    /**
      * Method to perform the song search from the API
      *
      * @see "lyricsovh.docs.apiary.io/#"
@@ -527,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (!valid) {
             minimizeKeyboard();
             loadingDialog.dialogDismiss();
-            displaySnackbar(message);
+            displaySnackBar(message);
         }
 
         return valid;
@@ -548,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      *
      * @param message containing the error message to be displayed
      */
-    private void displaySnackbar(ArrayList<String> message) {
+    private void displaySnackBar(ArrayList<String> message) {
         //Instance of snack bar with a message error saying that the user entered an invalid input. Fields cannot be
         //empty. It receives an array of strings with the error message.
         Snackbar snackbar = Snackbar.make(searchButton, TextUtils.join(" and ", message) + " field cannot be empty", Snackbar.LENGTH_INDEFINITE)
@@ -922,7 +954,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     LyricSearch currentSearch = new LyricSearch(newId, currentArtist, currentSong, false);
                     searchHistory.add(currentSearch);
 
-                    // Application was having a bug of adding a new song in the ListView with info from another search
+                    // Application was having a bug of adding a new song in the ListView with info from another search when in tablet mode
                     // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
                     searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
 
