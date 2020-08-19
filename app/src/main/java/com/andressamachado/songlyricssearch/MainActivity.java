@@ -273,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Listener to the google image button
         googleButton.setOnClickListener(v -> {
+            loadingDialog.startLoadingDialog();
             //Performs a google search with the data passed by the user
             performGoogleSearch();
         });
@@ -343,8 +344,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Notify after add is not working, so both had to be changed by overkill code
         //listViewSearchesAdapter.notifyDataSetChanged();
 
-        // Application was having a bug of adding a new song in the ListView with info from another search when in tablet mode
-        // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
+        // listViewSearchesAdapter.notifyDataSetChanged() was not working for adding new items, never refreshed the list.
+        // After research on tutorials and stack overflow this is a workaround.
         searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
         removeFragmentFromScreen();
     }
@@ -954,8 +955,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     LyricSearch currentSearch = new LyricSearch(newId, currentArtist, currentSong, false);
                     searchHistory.add(currentSearch);
 
-                    // Application was having a bug of adding a new song in the ListView with info from another search when in tablet mode
-                    // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
+                    // listViewSearchesAdapter.notifyDataSetChanged() was not working for adding new items, never refreshed the list.
+                    // After research on tutorials and stack overflow this is a workaround. Its a bit much to re set the adapter every time,
+                    // but it was the only working solution
                     searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
 
                 } else{
