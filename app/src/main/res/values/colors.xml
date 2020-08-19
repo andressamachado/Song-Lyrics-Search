@@ -7,4 +7,9 @@
     <color name="inputFieldSelectedColor">#edebeb</color>
     <color name="songListedBackground">#B3dedede</color>
     <color name="navigationBarHeader">#bcc1c6</color>
+
+    <color name="darkModeBackgroundColor">#010000</color>
+    <color name="darkModeTitleColor">#9a6279</color>
+    <color name="darkModeTextColor">#B3dedede</color>
+
 </resources>
