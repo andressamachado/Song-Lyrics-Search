@@ -12,8 +12,8 @@
     <string name="author_photo">author photo</string>
     <string name="drawer_instructions_label">Instructions</string>
     <string name="drawer_about_api_label">About the API</string>
-    <string name="drawer_github_page_label">My GitHub Page</string>
-    <string name="drawer_linkedin_label">My LinkedIn Profile</string>
+    <string name="drawer_github_page_label">GitHub Page</string>
+    <string name="drawer_linkedin_label">LinkedIn Profile</string>
     <string name="about_this_project">About this Project</string>
 
     <string name="info_alert_dialog_title">Instructions</string>

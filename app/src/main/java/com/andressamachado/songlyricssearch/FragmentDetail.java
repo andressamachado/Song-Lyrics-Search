@@ -77,6 +77,7 @@ public class FragmentDetail extends Fragment{
             String[] whereValue = {id+""};
             db.update(SongLyricsDBOpener.TABLE_NAME, values, "_id = ?", whereValue);
 
+
         });
 
         return result;

@@ -2,7 +2,7 @@ package com.andressamachado.songlyricssearch;
 
 /******************************************************************************************
  * This class is responsible for the main functionality of the application. It extends
- * AppCompatActivity to adjusts newer platform features on older devices. It implements
+ * AppCompatActivity wto adjusts newer platform features on older devices. It implements
  * NavigationView.OnNavigationItemSelectedListener to handle events on navigation items.
  *
  * @author Andressa Machado
@@ -17,7 +17,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -159,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         modeSwitch = (Switch) findViewById(R.id.switch_mode);
         searchedSongList = (ListView) findViewById(R.id.searched_song_list);
         needHelp = (TextView) findViewById(R.id.help_button);
-        isTablet = findViewById(R.id.fragmentLocation) != null;
+        isTablet = findViewById(R.id.lyrics_tablet_fragment_area) != null;
 
         //Sets the toolbar title to empty string to not display the name of the project there as it
         //does not have space to display everything we have to display.
@@ -277,13 +279,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 db.delete(SongLyricsDBOpener.TABLE_NAME, SongLyricsDBOpener.COL_SEARCH_ID + "= ?", new String[]{Long.toString(idToDelete)});
                 //Deletes the record from the array list
                 searchHistory.remove(position);
-                //Notify the adapter about the change
-                listViewSearchesAdapter.notifyDataSetChanged();
+
+
+                // Notify the adapter about the change
+                // Notify after add is not working, so both had to be changed by overkill code
+                //listViewSearchesAdapter.notifyDataSetChanged();
+
+                // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
+                 searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
 
                 if (isTablet){
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    Fragment toRemove = getSupportFragmentManager().findFragmentById(R.id.lyrics_tablet_fragment_area);
 
-                    ft.remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragmentLocation)));
+                    if(toRemove == null) {
+                        return;
+                    }
+
+                    ft.remove(toRemove);
                     ft.commit();
                 }
 
@@ -359,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(browserIntent);
                 break;
             case R.id.toolbar_about:
-                message = "This is the Song Lyrics Search activity written by Andressa Machado";
+                message = "This is the Song Lyrics Search app written by Andressa Machado :D";
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                 break;
         }
@@ -766,11 +779,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View newView = null;
-
             //If the view is not null, inflate the XML layout for the item in the list view
             if (convertView == null) {
                 newView = getLayoutInflater().inflate(R.layout.song_lyrics_listview_item, parent, false);
-            } else {
+            }
+            else {
                 return convertView;
             }
 
@@ -798,7 +811,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             rowSearch.setText(songInfoToBeDisplayed);
 
+            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
+            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
+            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
+            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
+            Log.e(TAG, "getView:" +  thisRow.getSongTitle());
+            Log.e(TAG, "size:" +  searchHistory.size());
+
             return newView;
+        }
+
+
+        public void updateSearchedList(ArrayList<LyricSearch> searchHistory) {
+            ArrayList<LyricSearch> temp = (ArrayList<LyricSearch>) searchHistory.clone();
+            this.searchHistory.clear();
+            this.searchHistory.addAll(temp);
+            this.notifyDataSetChanged();
         }
     }
 
@@ -903,6 +931,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     //Creates a new search object and add it to the array list
                     LyricSearch currentSearch = new LyricSearch(newId, currentArtist, currentSong, false);
                     searchHistory.add(currentSearch);
+
+                    // THIS IS OVERKILL! NO IDEA WHY IT WONT WORK OTHERWISE
+                    searchedSongList.setAdapter(new ListAdapter(searchHistory, getApplicationContext()));
+
                 } else{
                     //if song was already searched before, search for it in the data base and performs the search again
                     //do not save to the database nor the array list that controls the list os songs searched in this
@@ -919,16 +951,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }
                 }
+
                 if(newId == -1) {
                     Log.i("ERROR", "select problem: ");
                     return;
                 }
 
-                listViewSearchesAdapter.notifyDataSetChanged();
+
                 Bundle dataToPass = new Bundle();
 
-                dataToPass.putString(ARTIST_NAME, artist);
-                dataToPass.putString(SONG_TITLE, song);
+                dataToPass.putString(ARTIST_NAME, currentArtist);
+                dataToPass.putString(SONG_TITLE, currentSong);
                 dataToPass.putString(LYRIC, lyrics);
                 dataToPass.putBoolean(IS_FAVORITE, isFavorite);
                 dataToPass.putLong("id", newId);
@@ -938,7 +971,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     FragmentDetail dFragment = new FragmentDetail();
 
                     dFragment.setArguments(dataToPass);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragmentLocation, dFragment)
+                    getSupportFragmentManager().beginTransaction().replace(R.id.lyrics_tablet_fragment_area, dFragment)
                             .commit();
                 } else {
                     //Device is a smartphone
