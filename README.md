@@ -3,7 +3,7 @@ by **Andressa Machado**
 
 
 ## Description
-Song Lyrics Search is an application developed in order to learn more about Android Mobile development. Althoug the general idea of 
+Song Lyrics Search is an application developed in order to learn more about Android development. Althoug the general idea of 
 the application is very simple, a great number of mobile development features was implemented. 
 
 The application's name already gave us the idea for what it was developed for. User can type in an artist or group's name, followed 
@@ -19,7 +19,7 @@ is displayed in a ListView so the user can select a previously searched song and
 
 - [x] English and Portuguese supported
 
-- [x] SharedPreferences let the user decide which layout mode is better
+- [x] SharedPreferences let the user decide which layout style is better
 
 - [x] SQLiteDatabase used to save songs previously searched
 
@@ -56,8 +56,8 @@ There are more screenshots under [Song-Lyrics-Search-Application/screenshots/](h
 ![](screenshots/T5_tablet_fragment.PNG)
 
 ## Contact 
-I can be reached at pess0005@algonquinlive.com or through my [LinkedIn](https://www.linkedin.com/in/andressa-machado-59705792/) page.
+I can be reached at pess0005@algonquinlive.com, andressa.pamachado@gmail.com or via my [LinkedIn](https://www.linkedin.com/in/andressa-machado-59705792/) page.
 
 Any feedback is always welcome as I am building my skills and they are more than valuable. 
 
-Thank you for having taken your time to see my android application :smiling_face_with_three_hearts:
+Thank you for having taken the time to see my android application :smiling_face_with_three_hearts:
