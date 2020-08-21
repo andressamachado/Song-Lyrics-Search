@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class SplashScreen extends AppCompatActivity {
     //Constant holding the period of time that the splash screen will be visible before going to the MainActivity
     //4 seconds in this case
-    private static final int SPLASH_SCREEN = 14000;
+    private static final int SPLASH_SCREEN = 4000;
 
     /**XML layout elements declarations*/
     Animation topAnimation, bottomAnimation;
