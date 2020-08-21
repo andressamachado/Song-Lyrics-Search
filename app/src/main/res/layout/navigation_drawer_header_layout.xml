@@ -5,14 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/navigationBarHeader"
     android:layout_width="match_parent"
-    android:layout_height="222dp"
+    android:layout_height="200dp"
     android:orientation="vertical"
     android:padding="16dp">
 
     <ImageView
         android:id="@+id/author_photo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
         android:contentDescription="@string/author_photo"
         android:paddingTop="5dp"
@@ -35,7 +35,7 @@
         android:text="@string/author_name"
         android:textSize="13sp"
         android:gravity="center_horizontal"
-        android:paddingTop="15dp"/>
+        android:paddingTop="08dp"/>
 
     <TextView
         android:id="@+id/navigation_header_app_version"
