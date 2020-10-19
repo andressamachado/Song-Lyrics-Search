@@ -3,7 +3,7 @@ by **Andressa Machado**
 
 
 ## Description
-Song Lyrics Search is an application developed in order to learn more about Android development. Althoug the general idea of 
+Song Lyrics Search is an application developed in order to learn more about Android development and improve my skills in Java. Althoug the general idea of 
 the application is very simple, a great number of mobile development features was implemented. 
 
 The application's name already gave us the idea for what it was developed for. User can type in an artist or group's name, followed 
